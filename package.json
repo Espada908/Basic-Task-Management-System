@@ -1,0 +1,17 @@
+{
+  "name": "basic-task-management-system",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+  "dev": "nodemon server.js"
+},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "nodemon": "^3.1.9"
+  }
+}
