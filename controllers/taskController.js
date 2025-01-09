@@ -1,56 +1,61 @@
 const { tasks } = require('../models/taskModel');
 
-let nextId = tasks.length + 1;
-
-// Get all tasks
-const getAllTasks = (req, res) => {
-  res.json(tasks);
+const getTasks = (req, res) => {
+  res.status(200).json(tasks);
 };
 
-// Create a new task
+const getTasksByStatus = (req, res) => {
+  const { status } = req.params;
+  const filteredTasks = tasks.filter(task => task.status.toLowerCase() === status.toLowerCase());
+  res.status(200).json(filteredTasks);
+};
+
 const createTask = (req, res) => {
   const { title, description, status, due_date } = req.body;
-  const newTask = { id: nextId++, title, description, status, due_date };
+  const newTask = {
+    id: tasks.length + 1,
+    title,
+    description,
+    status,
+    due_date,
+  };
   tasks.push(newTask);
   res.status(201).json(newTask);
 };
 
-// Get tasks by status
-const getTasksByStatus = (req, res) => {
-  const { status } = req.params;
-  const filteredTasks = tasks.filter(task => task.status.toLowerCase() === status.toLowerCase());
-  res.json(filteredTasks);
-};
-
-// Update a task
 const updateTask = (req, res) => {
   const { id } = req.params;
-  const task = tasks.find(t => t.id == id);
-  if (!task) return res.status(404).send('Task not found');
-
   const { title, description, status, due_date } = req.body;
+  const task = tasks.find(task => task.id === parseInt(id));
+
+  if (!task) {
+    return res.status(404).json({ message: 'Task not found' });
+  }
+
   task.title = title || task.title;
   task.description = description || task.description;
   task.status = status || task.status;
   task.due_date = due_date || task.due_date;
 
-  res.json(task);
+  res.status(200).json(task);
 };
 
-// Delete a task
 const deleteTask = (req, res) => {
   const { id } = req.params;
-  const index = tasks.findIndex(t => t.id == id);
-  if (index === -1) return res.status(404).send('Task not found');
+  const index = tasks.findIndex(task => task.id === parseInt(id));
+
+  if (index === -1) {
+    return res.status(404).json({ message: 'Task not found' });
+  }
 
   tasks.splice(index, 1);
-  res.status(204).send();
+  res.status(200).json({ message: 'Task deleted successfully' });
 };
 
 module.exports = {
-  getAllTasks,
-  createTask,
+  getTasks,
   getTasksByStatus,
+  createTask,
   updateTask,
   deleteTask,
 };
